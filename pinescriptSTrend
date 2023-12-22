@@ -1,0 +1,39 @@
+//@version=5
+indicator("Triple Supertrend with Alerts and 200 SMA Filter", overlay=true)
+
+// Input options
+fastLength = input(7, "Fast Length")
+fastMultiplier = input(3, "Fast Multiplier")
+mediumLength = input(14, "Medium Length")
+mediumMultiplier = input(3, "Medium Multiplier")
+slowLength = input(28, "Slow Length")
+slowMultiplier = input(3, "Slow Multiplier")
+use200SMA = input(true, "Filter with 200 SMA")
+
+// Calculate the three supertrends
+fastST = supertrend(fastLength, fastMultiplier)
+mediumST = supertrend(mediumLength, mediumMultiplier)
+slowST = supertrend(slowLength, slowMultiplier)
+
+// Calculate the 200 SMA
+sma200 = sma(close, 200)
+
+// Generate alerts based on triple supertrend and 200 SMA
+alertcondition(
+    (fastST == 1 and mediumST == 1 and slowST == 1) and (use200SMA ? close > sma200 : true),
+    "Buy",
+    "Triple Supertrend Buy Alert"
+)
+alertcondition(
+    (fastST == -1 and mediumST == -1 and slowST == -1) and (use200SMA ? close < sma200 : true),
+    "Sell",
+    "Triple Supertrend Sell Alert"
+)
+
+// Plot the three supertrends
+plot(fastST, color=fastST > 0 ? color.green : color.red, linewidth=2, title="Fast Supertrend")
+plot(mediumST, color=mediumST > 0 ? color.lime : color.orange, linewidth=2, title="Medium Supertrend")
+plot(slowST, color=slowST > 0 ? color.blue : color.purple, linewidth=2, title="Slow Supertrend")
+
+// Plot the 200 SMA (optional)
+plot(sma200, color=color.gray, linewidth=1, title="200 SMA")
